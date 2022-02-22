@@ -24,7 +24,7 @@ else:
 # URLs for all classes
 API_URL = 'https://wos-api.clarivate.com/api/wos/'
 URLS = {
-    'QueryRetrieval': API_URL,
+    'UserQuerySearch': API_URL,
     'ReferencesRetrieval': API_URL + '/references',
 }
 
