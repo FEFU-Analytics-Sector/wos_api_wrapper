@@ -1,22 +1,22 @@
-"""Basic class object for superclasses."""
-
+from wos_api_wrapper.wos.utils.config_manager import ConfigManager
 from typing import Dict, Optional
 
 
 class BaseWrapper:
     def __init__(self,
-                 wos_api_key: str,
+                 api_key: Optional[str] = None,
                  ) -> None:
         """Class intended as base class for superclasses.
 
         :param wos_api_key: Key to access WOS api.
         """
-        self.__wos_api_key = wos_api_key
         self.__request_headers = self.prepare_request_headers()
+        self.__config_manager = ConfigManager()
+        self.__config = self.__config_manager.get_or_create_config(api_key)
 
     def prepare_request_headers(self) -> Dict:
         return {
-            'X-APIKey': self.__wos_api_key
+            'X-APIKey': self.__config.get('Authentication', 'APIKey')
         }
 
     def get_request_per_second_remaining_quota(self) -> Optional[str]:
