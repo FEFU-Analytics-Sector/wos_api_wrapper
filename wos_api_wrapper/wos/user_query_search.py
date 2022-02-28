@@ -9,9 +9,9 @@ class UserQuerySearch(BaseWrapper):
                  database_id: str,
                  query: str,
                  first_record: int = 1,
-                 records_number: int = 100,
+                 records_count: int = 100,
                  api_key: Optional[str] = None,
-                 **kwds: str,
+                 **kwargs: str,
                  ) -> None:
         """Interaction with the Web of Science API Expanded. Search by user query.
                 :param query: User query for requesting data.
@@ -22,7 +22,7 @@ class UserQuerySearch(BaseWrapper):
                 :param database_id: Database to search. Must be a valid database ID,
                                     one of the following: BCI/BIOABS/BIOSIS/CCC/DCI/DIIDW/MEDLINE/WOK/WOS/ZOOREC.
                                     WOK represents all databases.
-                :param records_number: Number of records to return, must be 0-100.
+                :param records_count: Number of records to return, must be 0-100.
                 :param first_record: Specific record, if any within the result set to return.
                                      Cannot be less than 1 and greater than 100000.
                                      The search can return many records, this number can be more than 100
@@ -32,7 +32,7 @@ class UserQuerySearch(BaseWrapper):
                                 it is better to enter the api key into the command prompt if api wrapper requests it.
                                 Anyway, a configuration file will be created or overwritten locally,
                                 in which the key will be saved for future use.
-                :param kwds: Keywords passed on as query parameters.  Must contain
+                :param kwargs: Keywords passed on as query parameters. Must contain
                              fields and values mentioned in the API specification at
                              https://api.clarivate.com/swagger-ui/?url=https%3A%2F%2Fdeveloper.clarivate.com%2Fapis%2Fwos%2Fswagger.
                 Raises
@@ -45,10 +45,11 @@ class UserQuerySearch(BaseWrapper):
                 -----
                 Official documentation https://developer.clarivate.com/apis/wos
         """
-        super.__init__(api_key)
-        self.__api = URLS['UserQuerySearch']
-
-
-    def get_row_results(self):
-        pass
+        params = {
+            "databaseId": database_id,
+            "usrQuery": query,
+            "count": records_count,
+            "firstRecord": first_record,
+            **kwargs}
+        super(UserQuerySearch, self).__init__(api_url=URLS['UserQuerySearch'], api_key=api_key, params=params)
 
