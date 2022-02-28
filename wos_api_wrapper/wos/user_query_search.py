@@ -6,8 +6,8 @@ from wos_api_wrapper.wos.utils import URLS
 
 class UserQuerySearch(BaseWrapper):
     def __init__(self,
-                 database_id: str,
                  query: str,
+                 database_id: str,
                  first_record: int = 1,
                  records_count: int = 100,
                  api_key: Optional[str] = None,
@@ -33,8 +33,8 @@ class UserQuerySearch(BaseWrapper):
                                 Anyway, a configuration file will be created or overwritten locally,
                                 in which the key will be saved for future use.
                 :param kwargs: Keywords passed on as query parameters. Must contain
-                             fields and values mentioned in the API specification at
-                             https://api.clarivate.com/swagger-ui/?url=https%3A%2F%2Fdeveloper.clarivate.com%2Fapis%2Fwos%2Fswagger.
+                               fields and values mentioned in the API specification at
+                               https://api.clarivate.com/swagger-ui/?url=https%3A%2F%2Fdeveloper.clarivate.com%2Fapis%2Fwos%2Fswagger.
                 Raises
                 ------
                 WosQueryError
