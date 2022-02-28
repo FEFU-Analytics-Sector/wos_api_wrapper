@@ -56,5 +56,5 @@ class ArticleDetail(BaseWrapper):
             "count": records_count,
             "firstRecord": first_record,
             **kwargs}
-        super(ArticleDetail, self).__init__(api_url=URLS['UserQuerySearch'], api_key=api_key, params=params)
+        super(ArticleDetail, self).__init__(api_url=URLS['ArticleDetail']+detail_type, api_key=api_key, params=params)
 

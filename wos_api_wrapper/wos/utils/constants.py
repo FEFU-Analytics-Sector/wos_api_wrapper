@@ -17,7 +17,7 @@ else:
 API_URL = 'https://wos-api.clarivate.com/api/wos/'
 URLS = {
     'UserQuerySearch': API_URL,
-    'ReferencesRetrieval': API_URL + '/references',
+    'ArticleDetail': API_URL,
 }
 
 RETRIEVAL_MAX_RECORDS = 100
