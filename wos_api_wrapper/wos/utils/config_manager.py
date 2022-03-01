@@ -28,7 +28,7 @@ class ConfigManager(metaclass=Singleton):
         if not self.is_config_exists():
             print(f"Config file does not exist.")
             print(f"Creating config file at {CONFIG_FILE} with default paths...")
-            config = self.__create_config(api_key)
+            config = self.create_config(api_key)
         else:
             print(f"Config file exists at '{CONFIG_FILE}', reading...")
             config.read(CONFIG_FILE)
@@ -39,9 +39,8 @@ class ConfigManager(metaclass=Singleton):
     def is_config_exists() -> bool:
         return CONFIG_FILE.exists()
 
-    def __create_config(self,
-                        api_key: Optional[str] = None,
-                        ) -> configparser.ConfigParser:
+    @staticmethod
+    def create_config(api_key: Optional[str] = None) -> configparser.ConfigParser:
         config = configparser.ConfigParser()
         config.optionxform = str
         config.add_section('Directories')
