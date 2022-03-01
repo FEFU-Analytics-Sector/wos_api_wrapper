@@ -11,6 +11,8 @@ class ArticleDetail(BaseWrapper):
                  database_id: str,
                  first_record: int = 1,
                  records_count: int = 100,
+                 download: bool = True,
+                 use_cache: bool = True,
                  api_key: Optional[str] = None,
                  **kwargs: str,
                  ) -> None:
@@ -25,12 +27,20 @@ class ArticleDetail(BaseWrapper):
                                     one of the following: BCI/DRCI/WOK/WOS.
                                     WOK represents all databases.
                                     For "citing" available only WOS database
-                :param records_count: Number of records to return, must be 0-100.
                 :param first_record: Specific record, if any within the result set to return.
                                      Cannot be less than 1 and greater than 100000.
                                      The search can return many records, this number can be more than 100
                                      (the maximum number of entries in the response).
                                      The first_record parameter specifies which record to return the response from.
+                :param records_count: Number of records to return, must be 0-100.
+                :param download: If True, then the response will be cached locally for future use.
+                                 To get cached responses for previous requests create a new object of this class
+                                 with the same parameters and set use_cache=True.
+                                 Then instead of sending a request to the api, cache data will be returned
+                :param use_cache: If True, then the response will be loaded from the cache
+                                  if it was previously downloaded.
+                                  Attention! The old version of the loaded response may not correspond
+                                  to the current Web of Science data.
                 :param api_key: Your WOS api key. It is not recommended to pass this parameter,
                                 it is better to enter the api key into the command prompt if api wrapper requests it.
                                 Anyway, a configuration file will be created or overwritten locally,
@@ -56,5 +66,11 @@ class ArticleDetail(BaseWrapper):
             "count": records_count,
             "firstRecord": first_record,
             **kwargs}
-        super(ArticleDetail, self).__init__(api_url=URLS['ArticleDetail']+detail_type, api_key=api_key, params=params)
+        super(ArticleDetail, self).__init__(
+            api_url=URLS['ArticleDetail']+detail_type,
+            api_key=api_key,
+            params=params,
+            download=download,
+            use_cache=use_cache
+        )
 

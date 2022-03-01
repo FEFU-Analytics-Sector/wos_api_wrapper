@@ -8,6 +8,8 @@ from typing import Dict, Optional
 class BaseWrapper:
     def __init__(self,
                  api_url: str,
+                 download: bool = True,
+                 use_cache: bool = True,
                  params: dict = {},
                  api_key: Optional[str] = None,
                  ) -> None:
@@ -27,8 +29,8 @@ class BaseWrapper:
         self.__request_headers = self.__prepare_request_headers()
         self.__request_params = params
 
-        self.__response = None
-        self.__response_headres = None
+        self.__response = self.__get_response()
+        self.__response_headres = self.get_response_headers()
 
     def __prepare_request_headers(self) -> Dict:
         return {
