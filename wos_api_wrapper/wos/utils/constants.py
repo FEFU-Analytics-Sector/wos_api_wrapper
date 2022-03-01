@@ -1,18 +1,12 @@
 from pathlib import Path
 
-if (Path.home()/".wos_api_wrapper").exists():
-    BASE_PATH = Path.home()/".wos_api_wrapper"
-else:
-    BASE_PATH = Path.home()/".wos_api_wrapper"/"Wos"
+BASE_PATH = Path.home()/".wos_api_wrapper"/"cache"
 DEFAULT_PATHS = {
-    'QueryRetrieval': BASE_PATH/'query_retrieval',
-    'ReferencesRetrieval': BASE_PATH/'references_retrieval',
+    'UserQuerySearch': BASE_PATH/'user_query_search',
+    'ArticleDetail': BASE_PATH/'article_detail',
 }
 
-if (Path.home()/".wos_api_wrapper").exists():
-    CONFIG_FILE = Path.home()/".wos_api_wrapper"/"config.ini"
-else:
-    CONFIG_FILE = Path.home()/".wos_api_wrapper"/"config.ini"
+CONFIG_FILE = Path.home()/".wos_api_wrapper"/"config.ini"
 
 API_URL = 'https://wos-api.clarivate.com/api/wos/'
 URLS = {
