@@ -6,7 +6,7 @@ from wos_api_wrapper.wos.utils.patterns import Singleton
 
 
 class ConfigManager(metaclass=Singleton):
-    def __init__(self):
+    def __init__(self) -> None:
         """A class intended to interact with a configuration file
 
         Notes
