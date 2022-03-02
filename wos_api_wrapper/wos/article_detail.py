@@ -1,7 +1,6 @@
 from typing import Optional
 
 from wos_api_wrapper.wos.superclasses import BaseWrapper
-from wos_api_wrapper.wos.utils import URLS
 
 
 class ArticleDetail(BaseWrapper):
@@ -67,7 +66,7 @@ class ArticleDetail(BaseWrapper):
             "firstRecord": first_record,
             **kwargs}
         super(ArticleDetail, self).__init__(
-            api_url=URLS['ArticleDetail']+detail_type,
+            endpoint_name='ArticleDetail_'+detail_type,
             api_key=api_key,
             params=params,
             download=download,

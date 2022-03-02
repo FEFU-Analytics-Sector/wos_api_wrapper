@@ -1,7 +1,6 @@
 from typing import Optional
 
 from wos_api_wrapper.wos.superclasses import BaseWrapper
-from wos_api_wrapper.wos.utils import URLS
 
 
 class UserQuerySearch(BaseWrapper):
@@ -62,7 +61,7 @@ class UserQuerySearch(BaseWrapper):
             "firstRecord": first_record,
             **kwargs}
         super(UserQuerySearch, self).__init__(
-            api_url=URLS['UserQuerySearch'],
+            endpoint_name='UserQuerySearch',
             api_key=api_key,
             params=params,
             download=download,
