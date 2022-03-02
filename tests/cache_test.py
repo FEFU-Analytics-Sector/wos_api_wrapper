@@ -1,5 +1,6 @@
 from wos_api_wrapper.wos.user_query_search import UserQuerySearch
 
+import time
 
 database_id = "WOS"
 query = "OG=({Far Eastern Federal University})"
@@ -17,6 +18,8 @@ header1 = UserQuerySearch(
 print("first header:")
 print(header1)
 
+time.sleep(2)
+
 header2 = UserQuerySearch(
     database_id=database_id,
     query=query,
@@ -26,8 +29,8 @@ header2 = UserQuerySearch(
     use_cache=True
 ).get_response_headers()
 
-print("second header:")
+print(f"second header: {type(header2)}")
 print(header2)
 
-assert(header1 == header2, "\nThe response was not downloaded or correctly loaded from cache\n")
+assert str(header1) == str(header2), "\nThe response was not downloaded or correctly loaded from cache\n"
 print("RESPONSE CACHING: SUCCESS\n\n\n")
