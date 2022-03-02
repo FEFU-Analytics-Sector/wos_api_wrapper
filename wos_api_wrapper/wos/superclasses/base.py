@@ -3,7 +3,7 @@ from requests.structures import CaseInsensitiveDict
 from typing import Dict, Optional
 from collections import OrderedDict
 
-from wos_api_wrapper.wos.utils.cache_manager import CacheManager
+from wos_api_wrapper.wos.utils.cache_manager import CachedFileManager
 from wos_api_wrapper.wos.utils.config_manager import ConfigManager
 from wos_api_wrapper.wos.utils import URLS, DEFAULT_PATHS
 
@@ -13,7 +13,7 @@ class BaseWrapper:
                  endpoint_name: str,
                  download: bool = True,
                  use_cache: bool = True,
-                 params: dict = dict(),
+                 params: dict = dict({}),
                  api_key: Optional[str] = None,
                  ) -> None:
         """Class intended as base class for superclasses.
@@ -33,51 +33,51 @@ class BaseWrapper:
         :param api_key: Key to access WOS api.
         """
 
-        self.__config_manager = ConfigManager()
-        self.__config = self.__config_manager.get_or_create_config(api_key)
+        self.__config = ConfigManager().get_or_create_config(api_key)
 
         self.__params = params
         self.__download = download
         self.__use_cache = use_cache
+        self.__api_url = URLS[endpoint_name]
         if use_cache or download:
-            self.__cache_manager = CacheManager(
+            self.__cache_manager = CachedFileManager(
                 DEFAULT_PATHS[endpoint_name],
                 self.__get_sorted_params_string()
             )
 
-        self.__api_url = URLS[endpoint_name]
-        self.__request_headers = self.__prepare_request_headers()
-        self.__request_params = params
+        self.__response_data = {}
+        self.__fill_response_data()
 
-        self.__response = None
-        self.__response = self.__get_response()
-        self.__response_headers = self.get_response_headers()
+        if download:
+            self.__save_to_cache_response_data()
+
+    def __get_sorted_params_string(self):
+        ordered_params = OrderedDict(sorted(self.__params.items()))
+        return str(ordered_params)
+
+    def __fill_response_data(self) -> None:
+        if self.__cache_manager.is_file_exist() and self.__use_cache:
+            self.__response_data = self.__cache_manager.load_from_cache()
+        else:
+            response = self.__make_request()
+            self.__response_data['headers'] = dict(response.headers)
+            self.__response_data['content_json'] = response.json()
+
+    def __make_request(self) -> requests.Response:
+        return requests.get(
+            url=self.__api_url,
+            headers=self.__prepare_request_headers(),
+            params=self.__params
+        )
 
     def __prepare_request_headers(self) -> Dict:
         return {
             'X-APIKey': self.__config.get('Authentication', 'APIKey')
         }
 
-    def __get_response(self) -> Optional[requests.Response]:
-        if self.__cache_manager.is_file_exist() and self.__use_cache:
-            return None
-        elif self.__response is None:
-            return requests.get(
-                url=self.__api_url,
-                headers=self.__request_headers,
-                params=self.__request_params
-            )
-
-    def get_row_results(self) -> str:
-        """Method for getting json-encoded content of a response.
-
-        Returns
-        -------
-        result : str
-                 The json-encoded content of a response, if any.
-        """
-        result = self.__get_response().json()
-        return result
+    def __save_to_cache_response_data(self) -> None:
+        if not self.__cache_manager.is_file_exist() or not self.__use_cache:
+            self.__cache_manager.save_to_cache(data=self.__response_data)
 
     def get_request_per_second_remaining_quota(self) -> Optional[str]:
         """Method for getting remaining request quota per second.
@@ -93,7 +93,7 @@ class BaseWrapper:
             remaining_quota = None
         return remaining_quota
 
-    def get_response_headers(self) -> CaseInsensitiveDict[str]:
+    def get_response_headers(self) -> dict:
         """Method for getting full response headers.
 
         Returns
@@ -101,9 +101,15 @@ class BaseWrapper:
         response.headers : CaseInsensitiveDict[str]
                            response headers.
         """
-        response = self.__get_response()
-        return response.headers
+        return self.__response_data['headers']
 
-    def __get_sorted_params_string(self):
-        ordered_params = OrderedDict(sorted(self.__params.items()))
-        return str(ordered_params)
+    def get_row_content_json(self) -> dict:
+        """Method for getting json-encoded content of a response.
+
+        Returns
+        -------
+        result : str
+                 The json-encoded content of a response, if any.
+        """
+        result = self.__response_data['content_json']
+        return result
