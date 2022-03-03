@@ -1,11 +1,12 @@
 import requests
-from requests.structures import CaseInsensitiveDict
 from typing import Dict, Optional
 from collections import OrderedDict
+from simplejson import JSONDecodeError
 
 from wos_api_wrapper.wos.utils.cache_manager import CachedFileManager
 from wos_api_wrapper.wos.utils.config_manager import ConfigManager
 from wos_api_wrapper.wos.utils import URLS, DEFAULT_PATHS
+from wos_api_wrapper.wos.utils.exception import ERRORS_DICT
 
 
 class BaseWrapper:
@@ -64,11 +65,26 @@ class BaseWrapper:
             self.__response_data['content_json'] = response.json()
 
     def __make_request(self) -> requests.Response:
-        return requests.get(
+        response = requests.get(
             url=self.__api_url,
             headers=self.__prepare_request_headers(),
             params=self.__params
         )
+        self.__check_status_code(response)
+        return response
+
+    def __check_status_code(self,
+                            response: requests.Response):
+        if response.status_code != 200:
+            try:
+                error_exception = ERRORS_DICT[response.status_code]
+                try:
+                    message = response.json()['message']
+                except (JSONDecodeError, KeyError):
+                    message = ""
+                raise error_exception(message)
+            except KeyError:
+                response.raise_for_status()
 
     def __prepare_request_headers(self) -> Dict:
         return {

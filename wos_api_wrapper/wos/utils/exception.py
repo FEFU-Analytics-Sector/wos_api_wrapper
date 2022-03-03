@@ -1,7 +1,3 @@
-"""Base exceptions and classes for wos_api_wrapper.wos."""
-
-
-# Base classes
 class WosApiWrapperException(Exception):
     """Base class for exceptions in Wos."""
 
@@ -10,12 +6,10 @@ class WosError(WosApiWrapperException):
     """Exception for a serious error in Wos."""
 
 
-# Query errors
 class WosQueryError(WosApiWrapperException):
     """Exception for problems related to Wos queries."""
 
 
-# HTML errors
 class WosHtmlError(WosApiWrapperException):
     """Wrapper for exceptions raised by requests."""
 
@@ -47,13 +41,11 @@ class Wos414Error(WosHtmlError):
 
 
 class Wos429Error(WosHtmlError):
-    """Raised if a query yields a 429 error (Quota exceeded)."""
+    """Raised if a query yields a 429 error (Throttle error)."""
 
 
 class Wos500Error(WosHtmlError):
-    """Raised if a query yields a 500 error (Internal Server Error
-    for url).
-    """
+    """Raised if a query yields a 500 error (Internal Server Error for url)."""
 
 
 class Wos502Error(WosHtmlError):
@@ -62,3 +54,16 @@ class Wos502Error(WosHtmlError):
 
 class Wos504Error(WosHtmlError):
     """Raised if a query yields a 504 error (Gateway Time-out for url)."""
+
+
+ERRORS_DICT = {
+    400: Wos400Error,
+    401: Wos401Error,
+    403: Wos403Error,
+    404: Wos404Error,
+    413: Wos413Error,
+    414: Wos414Error,
+    429: Wos429Error,
+    500: Wos500Error,
+    502: Wos502Error,
+}
