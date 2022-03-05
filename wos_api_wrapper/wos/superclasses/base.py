@@ -119,7 +119,7 @@ class BaseWrapper:
         """
         return self.__response_data['headers']
 
-    def get_row_content_json(self) -> dict:
+    def get_raw_content_json(self) -> dict:
         """Method for getting json-encoded content of a response.
 
         Returns
